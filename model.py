@@ -9,6 +9,7 @@ class OutOfStock(Exception):
 
 
 def allocate(line: OrderLine, batches: List[Batch]) -> str:
+    """領域服務"""
     try:
         batch = next(b for b in sorted(batches) if b.can_allocate(line))
         batch.allocate(line)
@@ -19,18 +20,22 @@ def allocate(line: OrderLine, batches: List[Batch]) -> str:
 
 @dataclass(unsafe_hash=True)
 class OrderLine:
+    """值物件"""
+
     orderid: str
     sku: str
     qty: int
 
 
 class Batch:
+    """領域模型"""
+
     def __init__(self, ref: str, sku: str, qty: int, eta: Optional[date]):
         self.reference = ref
         self.sku = sku
         self.eta = eta
         self._purchased_quantity = qty
-        self._allocations = set()  # type: Set[OrderLine]
+        self._allocations: Set[OrderLine] = set()
 
     def __repr__(self):
         return f"<Batch {self.reference}>"
